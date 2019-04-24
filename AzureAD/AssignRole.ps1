@@ -68,7 +68,17 @@ Write-Host "Searching for service principal registration for msi user named '$ms
 $msiSP = Get-AzureADServicePrincipal -SearchString $msiServicePrincipalName | Where-Object {$_.ServicePrincipalType -eq "ManagedIdentity"}
 
 if ($msiSp.count -ne 1) {
-    throw "Could not find msi service principal."
+    # fullname check
+    write-host $msiSp.count "msi principals found. Trying fullname search."
+
+    $msiF = $msiSP | Where-Object {$_.DisplayName -eq $msiServicePrincipalName}
+
+    if($msiF.count -eq 1) {
+        $msiSP = $msiF
+    }
+    else {
+        throw "Could not find msi service principal."
+    }
 }
 
 $msiPrincipalId = $msiSP.ObjectId
