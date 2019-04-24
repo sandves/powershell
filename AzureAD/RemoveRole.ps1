@@ -36,7 +36,7 @@ if ($applications.count -ne 1) {
     throw "Could not find only one application from your search string"
 }
 
-$roleId = ""
+$roleId = $null
 
 foreach ($role in $applications.AppRoles) {
     if ($role.Value -eq $roleName) {
@@ -46,7 +46,7 @@ foreach ($role in $applications.AppRoles) {
     }
 }
 
-if ($role -eq "") {
+if ($role -eq $null) {
     throw "Could not find the role specified."
 }
 
