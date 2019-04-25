@@ -47,7 +47,7 @@ foreach ($role in $applications.AppRoles) {
     }
 }
 
-if ($role -eq $null) {
+if ($roleId -eq $null) {
     throw "Could not find the role specified."
 }
 
