@@ -17,11 +17,10 @@ Use at own risk, and you are yourself responsible to take good care of access to
 certificate login when a slightest suspicion that it is leaked or sent a place it shouldn't be, even when you have used this script. 
 #>
 
-If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-{   
-	$arguments = "& '" + $myinvocation.mycommand.definition + "'"
-	Start-Process powershell -Verb runAs -ArgumentList $arguments -WorkingDirectory $PSScriptRoot
-	Break
+If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {   
+    $arguments = "& '" + $myinvocation.mycommand.definition + "'"
+    Start-Process powershell -Verb runAs -ArgumentList $arguments -WorkingDirectory $PSScriptRoot
+    Break
 }
 
 Write-Host "You will now have to log into your account on azure. Note that if you use your account as a guest account in another tenant, this script hasn't been testes and is not intended for other than native accounts towards native resources in a tenant."
@@ -42,27 +41,45 @@ Write-Debug "Generating personal certificate"
 $certName = $principalName + "MsiCert"
 
 $cert = New-SelfSignedCertificate -CertStoreLocation "cert:\CurrentUser\My" `
-  -Subject "CN=$certName" `
-  -KeySpec KeyExchange
+    -Subject "CN=$certName" `
+    -KeySpec KeyExchange
 $keyValue = [System.Convert]::ToBase64String($cert.GetRawCertData())
 
 # Creating new personal service principal
-Write-Debug "Creating new personal service principal"
+# If it already exists, update certificate
+$sp = Get-AzureADServicePrincipal -Filter "DisplayName eq '$principalName'"
+$applicationId = $sp.AppId;
 
-$sp = New-AzADServicePrincipal -DisplayName $principalName `
-  -CertValue $keyValue `
-  -EndDate $cert.NotAfter `
-  -StartDate $cert.NotBefore
+if ($sp) {
+    Write-Debug "Service princiapl already exists. Updating certificate"
+    $existingCredentials = Get-AzureADServicePrincipalKeyCredential -ObjectId $sp.ObjectId
+    if ($existingCredentials) {
+        Remove-AzADSpCredential -DisplayName principalName
+    }
+    New-AzADSpCredential -ObjectId $sp.ObjectId `
+        -CertValue $keyValue `
+        -EndDate $cert.NotAfter `
+        -StartDate $cert.NotBefore
+}
+else {
+    Write-Debug "Creating new personal service principal"
+    $sp = New-AzADServicePrincipal -DisplayName $principalName `
+        -CertValue $keyValue `
+        -EndDate $cert.NotAfter `
+        -StartDate $cert.NotBefore
 
-Start-Sleep 30
+    $applicationId = $sp.ApplicationId;
 
-# Assigning you to the service principal
-Write-Debug "Assigning you to the service principal"
+    Start-Sleep 30
 
-$x = New-AzRoleAssignment -RoleDefinitionName Contributor -ServicePrincipalName $sp.ApplicationId
+    # Assigning you to the service principal
+    Write-Debug "Assigning you to the service principal"
+
+    $x = New-AzRoleAssignment -RoleDefinitionName Contributor -ServicePrincipalName $applicationId
+}
 
 # Environment var info
-$appId = $sp.ApplicationId
+$appId = $applicationId
 $tid = $azureConn.Account.Tenants[0]
 $ct = $cert.Thumbprint
 $envVar = "RunAs=App;AppId=$appId;TenantId=$tid;CertificateThumbprint=$ct;CertificateStoreLocation=CurrentUser"

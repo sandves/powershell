@@ -53,7 +53,7 @@ if ($roleId -eq $null) {
 
 # get application app registration
 Write-Host "Searching for app registration for application named '$resourceApplicationName'"
-$appSP = Get-AzureADServicePrincipal -SearchString $resourceApplicationName | Where-Object {$_.ServicePrincipalType -eq "Application"}
+$appSP = Get-AzureADServicePrincipal -SearchString $resourceApplicationName | Where-Object { $_.ServicePrincipalType -eq "Application" }
 
 if ($appSP.count -ne 1) {
     $count = $appSp.count
@@ -65,15 +65,15 @@ Write-Host "Found app service id $resourceId"
 
 # get msi service principal registration
 Write-Host "Searching for service principal registration for msi user named '$msiServicePrincipalName'"
-$msiSP = Get-AzureADServicePrincipal -SearchString $msiServicePrincipalName | Where-Object {$_.ServicePrincipalType -eq "ManagedIdentity"}
+$msiSP = Get-AzureADServicePrincipal -SearchString $msiServicePrincipalName | Where-Object { $_.ServicePrincipalType -eq "ManagedIdentity" }
 
 if ($msiSp.count -ne 1) {
     # fullname check
     write-host $msiSp.count "msi principals found. Trying fullname search."
 
-    $msiF = $msiSP | Where-Object {$_.DisplayName -eq $msiServicePrincipalName}
+    $msiF = $msiSP | Where-Object { $_.DisplayName -eq $msiServicePrincipalName }
 
-    if($msiF.count -eq 1) {
+    if ($msiF.count -eq 1) {
         $msiSP = $msiF
     }
     else {
