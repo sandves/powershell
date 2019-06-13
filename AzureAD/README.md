@@ -60,7 +60,7 @@ Then run
 
 This will create the environment variable *AzureServicesAuthConnectionString* with the following value: `RunAs=App;AppId={AppId};TenantId={TenantId};CertificateThumbprint={Thumbprint};CertificateStoreLocation={CurrentUser}`.
 
-`AppId` is the Application ID of the created service principal. `TenantId` is the tenant ID
+`AppId` is the Application ID of the created service principal. `TenantId` is the tenant ID you are signed in to.
 
 For more details about the `AzureServiceTokenProvider` connection string support, see [service-to-service authentication](https://docs.microsoft.com/en-us/azure/key-vault/service-to-service-authentication#connection-string-support).
 
