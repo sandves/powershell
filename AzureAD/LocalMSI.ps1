@@ -54,7 +54,7 @@ if ($sp) {
     Write-Debug "Service princiapl already exists. Updating certificate"
     $existingCredentials = Get-AzureADServicePrincipalKeyCredential -ObjectId $sp.ObjectId
     if ($existingCredentials) {
-        Remove-AzADSpCredential -DisplayName principalName
+        Remove-AzADSpCredential -DisplayName $principalName
     }
     New-AzADSpCredential -ObjectId $sp.ObjectId `
         -CertValue $keyValue `
