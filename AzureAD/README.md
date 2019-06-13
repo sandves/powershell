@@ -55,7 +55,7 @@ and sign in to your Azure account.
 
 Then run
 ```powershell
-\.LocalMSI.ps1
+.\LocalMSI.ps1
 ```
 
 This will create the environment variable *AzureServicesAuthConnectionString* with the following value: `RunAs=App;AppId={AppId};TenantId={TenantId};CertificateThumbprint={Thumbprint};CertificateStoreLocation={CurrentUser}`.
