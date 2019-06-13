@@ -100,4 +100,4 @@ To renew the certificate, simply run the `LocalMSI.ps1` script again, and it sho
 - Some of the scripts require powershell to be run as administrator
 - Make sure you have the latest version of the [prerequisite](#prerequisites) tooling
 - You may have to wait up to 12 hours for role assignments to become active in case old tokens has been cached
-- The local MSI environment variable may not be visible to applications until you restart them
+- The local MSI environment variable may not be visible to applications (e.g. Visual Studio) until you restart them
