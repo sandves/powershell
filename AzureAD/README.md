@@ -47,6 +47,8 @@ param(
 ```
 
 ### Local MSI
+> **NOTE**: Before proceeding with the creation of a custom service principal for local development, try the options mentioned in [local development authentication](https://docs.microsoft.com/en-us/azure/key-vault/service-to-service-authentication#local-development-authentication).
+
 To enable MSI on your local development machine, open powershell as administrator and execute the following command
 ```powerhell
 Connect-AzureAD
