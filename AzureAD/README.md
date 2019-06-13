@@ -84,7 +84,7 @@ fdf8d17a-1c8c-4c41-bb82-1fe0d4711237 680ac5a7-3d96-4fb6-878a-eb6d35f24e59 userna
 
 Then run
 ```powershell
-Get-AzureADServicePrincipalKeyCredentials -ObjectId fdf8d17a-1c8c-4c41-bb82-1fe0d4711237
+Get-AzureADServicePrincipalKeyCredential -ObjectId fdf8d17a-1c8c-4c41-bb82-1fe0d4711237
 ```
 Example output:
 ```
