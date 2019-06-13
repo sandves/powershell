@@ -47,33 +47,39 @@ param(
 ```
 
 ### Local MSI
+
 > **NOTE**: Before proceeding with the creation of a custom service principal for local development, try the options mentioned in [local development authentication](https://docs.microsoft.com/en-us/azure/key-vault/service-to-service-authentication#local-development-authentication) as this is what Microsofts recommends.
 > This script should be only used when authenticating from Visual Studio or Azure CLI does not work for you during development/testing.
 
 To enable MSI on your local development machine, open powershell as administrator and execute the following command
+
 ```powerhell
 Connect-AzureAD
 ```
+
 and sign in to your Azure account.
 
 Then run
+
 ```powershell
 .\LocalMSI.ps1
 ```
 
-This will create the environment variable *AzureServicesAuthConnectionString* with the following value: `RunAs=App;AppId={AppId};TenantId={TenantId};CertificateThumbprint={Thumbprint};CertificateStoreLocation={CurrentUser}`.
+This will create the environment variable _AzureServicesAuthConnectionString_ with the following value: `RunAs=App;AppId={AppId};TenantId={TenantId};CertificateThumbprint={Thumbprint};CertificateStoreLocation={CurrentUser}`.
 
 `AppId` is the Application ID of the created service principal. `TenantId` is the ID of the tenant you are signed in to.
 
 For more details about the `AzureServiceTokenProvider` connection string support, see [service-to-service authentication](https://docs.microsoft.com/en-us/azure/key-vault/service-to-service-authentication#connection-string-support).
 
 #### Certificate renewal
+
 The created sertificate will be valid for one year by default. To check the expiration date of your certificate, execute the following commands:
 
 ```powershell
 Get-AzureADServicePrincipal -Filter "DisplayName eq 'username'"
 ```
-where *username* is the name of the user signed in to the machine that executed `LocalMSI.ps1` the first time.
+
+where _username_ is the name of the user signed in to the machine that executed `LocalMSI.ps1` the first time.
 Exmaple output:
 
 ```
@@ -83,10 +89,13 @@ fdf8d17a-1c8c-4c41-bb82-1fe0d4711237 680ac5a7-3d96-4fb6-878a-eb6d35f24e59 userna
 ```
 
 Then run
+
 ```powershell
-Get-AzureADServicePrincipalKeyCredentials -ObjectId fdf8d17a-1c8c-4c41-bb82-1fe0d4711237
+Get-AzureADServicePrincipalKeyCredential -ObjectId fdf8d17a-1c8c-4c41-bb82-1fe0d4711237
 ```
+
 Example output:
+
 ```
 CustomKeyIdentifyer : {15, 128, 56, 235...}
 EndDate             : 07-Jun-20 15:18:22
@@ -100,6 +109,7 @@ Value               :
 To renew the certificate, simply run the `LocalMSI.ps1` script again, and it should renew the certificate on the existing service principal and update the environment variable.
 
 ## Troubleshooting
+
 - Some of the scripts require powershell to be run as administrator
 - Make sure you have the latest version of the [prerequisite](#prerequisites) tooling
 - You may have to wait up to 12 hours for role assignments to become active in case old tokens has been cached
