@@ -4,4 +4,4 @@ Collection of powershell scripts.
 
 ## Documentation
 
-[Azure AD](AzureAd/README.md)
+[Azure AD](AzureAD/README.md)
